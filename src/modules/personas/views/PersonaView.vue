@@ -95,7 +95,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue';
-import { getIdPersona } from '../services/personaService';
+import { getIdPersona } from '../services/persona.service';
 
 const props = defineProps({
   view: { type: Boolean, default: false, required: true },

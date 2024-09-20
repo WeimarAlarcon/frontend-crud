@@ -139,7 +139,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
-import { getIdPersona, update } from '../services/personaService';
+import { getIdPersona, update } from '../services/persona.service';
 import { useQuasar } from 'quasar';
 import { PersonaInterface } from '../interfaces/persona.interface';
 

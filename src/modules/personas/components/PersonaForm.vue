@@ -139,7 +139,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, watchEffect, watch } from 'vue';
-import { post } from '../services/personaService';
+import { post } from '../services/persona.service';
 import { useQuasar } from 'quasar';
 import { PersonaInterface } from '../interfaces/persona.interface';
 

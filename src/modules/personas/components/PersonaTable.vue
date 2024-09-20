@@ -69,7 +69,7 @@ import PersonaEdit from './PersonaEdit.vue';
 import {
   getPersonas,
   remove,
-} from 'src/modules/personas/services/personaService';
+} from 'src/modules/personas/services/persona.service';
 
 defineOptions({
   name: 'PersonaTablePage',
