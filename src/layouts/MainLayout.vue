@@ -53,6 +53,12 @@ const linksList: EssentialLinkProps[] = [
     link: 'persona',
   },
   {
+    title: 'Notificaciones',
+    caption: 'Notificaciones Push',
+    icon: 'notifications',
+    link: 'notificacion',
+  },
+  {
     title: 'Docs',
     caption: 'quasar.dev',
     icon: 'school',
