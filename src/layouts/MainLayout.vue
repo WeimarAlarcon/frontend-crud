@@ -12,6 +12,43 @@
         />
 
         <q-toolbar-title> Quasar App </q-toolbar-title>
+        <q-btn-dropdown rounded>
+          <template v-slot:label>
+            <div class="row items-center no-wrap" v-if="notificaciones >= 0">
+              <q-icon name="notifications" />
+              <q-badge floating color="red" rounded>
+                {{ notificaciones }}
+              </q-badge>
+            </div>
+          </template>
+          <!-- <q-badge v-if="notificaciones >= 0" floating color="red" rounded>
+            {{ notificaciones }}
+          </q-badge> -->
+          <!-- Lista de personas en el dropdown -->
+          <q-list v-if="personas.length > 0">
+            <q-item v-for="(persona, index) in personas" :key="index" clickable>
+              <q-item-section>
+                <q-item-label>
+                  <strong
+                    >Fecha y Hora: {{ new Date().toLocaleString() }}</strong
+                  ><br />
+                  CI: {{ persona.carnetIdentidad }}<br />
+                  Nombre:
+                  {{
+                    `${persona.nombre} ${persona.apellidoPaterno} ${persona.apellidoMaterno}`
+                  }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <q-list v-else>
+            <q-item>
+              <q-item-section>
+                <q-item-label>No hay notificaciones nuevas</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
 
         <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
@@ -36,13 +73,44 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { useQuasar } from 'quasar';
 import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
+import { usePersonaSocket } from '../modules/personas/services/persona.service';
+import { PersonaInterface } from 'src/modules/personas/interfaces/persona.interface';
 
 defineOptions({
   name: 'MainLayout',
+});
+
+const $q = useQuasar();
+
+const { notificaciones, personaNueva } = usePersonaSocket();
+const personas = ref<PersonaInterface[]>([]);
+// Mostrar notificación
+const mostrarNotificacion = (persona: PersonaInterface) => {
+  $q.notify({
+    message: 'Nueva persona Regitrada:', // Ajusta según los datos que quieras mostrar
+    caption: `CI: ${persona.carnetIdentidad} <br> 
+      Nombre: ${persona.nombre} ${persona.apellidoPaterno} ${persona.apellidoMaterno} <br>
+      Fecha de nacimiento: ${persona.fechaNacimiento} <br>
+    `,
+    timeout: 3000, // Duración de la notificación
+    type: 'info',
+    color: 'primary',
+    position: 'top-right',
+    html: true,
+  });
+};
+
+// Escuchar cambios en las personas registradas
+watch(personaNueva, (nuevaPersona) => {
+  if (nuevaPersona) {
+    mostrarNotificacion(nuevaPersona as unknown as PersonaInterface); // Mostrar la notificación si llega una nueva persona
+    personas.value.push(nuevaPersona as unknown as PersonaInterface); // Agrega la nueva persona a la lista
+  }
 });
 
 const linksList: EssentialLinkProps[] = [

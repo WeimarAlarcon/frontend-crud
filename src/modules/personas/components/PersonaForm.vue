@@ -139,13 +139,18 @@
 
 <script setup lang="ts">
 import { ref, reactive, watchEffect, watch } from 'vue';
-import { post } from '../services/persona.service';
+import {
+  post,
+  enviarMensaje,
+  usePersonaSocket,
+} from '../services/persona.service';
 import { useQuasar } from 'quasar';
 import { PersonaInterface } from '../interfaces/persona.interface';
 
 const $q = useQuasar();
 const localAlert = ref(false);
 const options = ['Masculino', 'Femenino'];
+const { personaNueva } = usePersonaSocket();
 
 const persona: PersonaInterface = reactive({
   id: null as number | null,
@@ -187,6 +192,12 @@ watch(
   }
 );
 
+watch(personaNueva, (nuevoMensajeRecibido) => {
+  if (nuevoMensajeRecibido) {
+    console.log('Nuevo mensaje recibido:', nuevoMensajeRecibido);
+  }
+});
+
 const onDateChange = (newFecha: string) => {
   persona.edad = calcularEdad(new Date(newFecha)); // Actualiza la edad al seleccionar una nueva fecha
 };
@@ -204,6 +215,7 @@ watchEffect(() => {
 
 const crearPersona = async () => {
   const response = await post(persona);
+  enviarMensaje(persona);
   if (response.statusCode === 409) {
     let seconds = 2;
     const dialog = $q

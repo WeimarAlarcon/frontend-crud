@@ -1,5 +1,9 @@
 import { api } from 'src/boot/axios';
 import { PersonaInterface } from '../interfaces/persona.interface';
+import io from 'socket.io-client';
+import { onMounted, onUnmounted, ref } from 'vue';
+
+const socket = io('http://localhost:3000'); // Reemplaza con la URL de tu servidor
 
 export const getPersonas = async () => {
   return await api.get('/personas');
@@ -35,4 +39,29 @@ export const remove = async (id: number) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export function usePersonaSocket() {
+  const personaNueva = ref('');
+  const notificaciones = ref(0);
+
+  onMounted(() => {
+    socket.on('personaNueva', (data) => {
+      personaNueva.value = data;
+      notificaciones.value += 1;
+      // console.log(data);
+    });
+  });
+
+  onUnmounted(() => {
+    socket.off('personaNueva');
+  });
+  return {
+    personaNueva,
+    notificaciones,
+  };
+}
+
+export const enviarMensaje = (persona: PersonaInterface) => {
+  socket.emit('enviarMensaje', persona);
 };
